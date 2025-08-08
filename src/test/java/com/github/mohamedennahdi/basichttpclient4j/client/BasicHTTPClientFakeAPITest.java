@@ -1,0 +1,103 @@
+package com.github.mohamedennahdi.basichttpclient4j.client;
+
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.processing.Generated;
+
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.util.EntityUtils;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+@Generated(value = "org.junit-tools-1.1.0")
+public class BasicHTTPClientFakeAPITest {
+	
+	public static final Logger LOGGER = LoggerFactory.getLogger(BasicHTTPClientFakeAPITest.class);
+	String url = "https://fakerestapi.azurewebsites.net/api/v1/Activities";
+	
+	@Test
+	public void doGetTest() throws Exception {
+		BasicHTTTPClient testSubject;
+		CloseableHttpResponse actual;
+		
+		LOGGER.info("Calling {}", this.url);
+
+		// default test
+		testSubject = new BasicHTTTPClient.Builder()
+				.setUrl(url)
+				.build();
+		actual = testSubject.doGet();
+
+		assertEquals(actual.getStatusLine().getStatusCode(), 200);
+		/*
+		 *
+		 */
+		String json = EntityUtils.toString(actual.getEntity());
+		JsonArray jsonObject = new Gson().fromJson(json, JsonArray.class);
+		assertEquals(jsonObject.size(), 30);
+		
+		LOGGER.info("Calling {}", this.url + "/1");
+
+		// default test
+		testSubject = new BasicHTTTPClient.Builder()
+				.setUrl(this.url + "/1")
+				.build();
+		actual = testSubject.doGet();
+
+		assertEquals(actual.getStatusLine().getStatusCode(), 200);
+		/*
+		 *
+		 */
+		String expected = """
+						{
+							"id": 1,
+							"idBook": 1,
+							"firstName": "First Name 1",
+							"lastName": "Last Name 1"
+						}
+				""";
+		json = EntityUtils.toString(actual.getEntity());
+		JsonObject actualJSON = new Gson().fromJson(json, JsonObject.class);
+		JsonObject expectedJSON = new Gson().fromJson(expected, JsonObject.class);
+		assertEquals(actualJSON, expectedJSON);
+
+	}
+
+	@Test
+	public void doPostTest() throws Exception {
+		BasicHTTTPClient testSubject;
+		CloseableHttpResponse actual;
+
+		String body = """
+					{
+					  "id": 77,
+					  "title": "Activity 77",
+					  "dueDate": "2025-08-06T14:17:11.218Z",
+					  "completed": false
+					}
+				""";
+
+		Map<String, String> headers = new HashMap<>();
+		headers.put("Content-Type", "application/json");
+		headers.put("Accept", "text/plain");
+
+		testSubject = new BasicHTTTPClient.Builder()
+				.setUrl(this.url)
+				.setHeaders(headers)
+				.setBody(body)
+				.build();
+
+		actual = testSubject.doPost();
+
+		assertEquals(actual.getStatusLine().getStatusCode(), 200);
+	}
+}
