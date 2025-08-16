@@ -65,6 +65,7 @@ public class BasicHTTPClientFakeAPITest {
 		JsonObject expectedJSON = new Gson().fromJson(expected, JsonObject.class);
 		actualJSON.remove("dueDate");
 		expectedJSON.remove("dueDate");
+		
 		assertEquals(actualJSON, expectedJSON);
 
 	}
