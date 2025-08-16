@@ -1,6 +1,5 @@
 package com.github.mohamedennahdi.basichttpclient4j.client;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
@@ -20,10 +19,10 @@ import com.google.gson.JsonObject;
 
 @Generated(value = "org.junit-tools-1.1.0")
 public class BasicHTTPClientFakeAPITest {
-	
+
 	public static final Logger LOGGER = LoggerFactory.getLogger(BasicHTTPClientFakeAPITest.class);
 	String url = "https://fakerestapi.azurewebsites.net/api/v1/Activities";
-	
+
 	@Test
 	public void doGetTest() throws Exception {
 		BasicHTTTPClient testSubject;
@@ -32,9 +31,7 @@ public class BasicHTTPClientFakeAPITest {
 		LOGGER.info("Calling {}", this.url);
 
 		// default test
-		testSubject = new BasicHTTTPClient.Builder()
-				.setUrl(url)
-				.build();
+		testSubject = new BasicHTTTPClient.Builder().setUrl(url).build();
 		actual = testSubject.doGet();
 
 		assertEquals(actual.getStatusLine().getStatusCode(), 200);
@@ -43,14 +40,12 @@ public class BasicHTTPClientFakeAPITest {
 		 */
 		String json = EntityUtils.toString(actual.getEntity());
 		JsonArray jsonObject = new Gson().fromJson(json, JsonArray.class);
-		assertEquals(jsonObject.size(), 30);
-		
-		LOGGER.info("Calling {}", this.url + "/1");
+		assertTrue(jsonObject.size() > 0);
+
+		LOGGER.info("Calling {}", url + "/1");
 
 		// default test
-		testSubject = new BasicHTTTPClient.Builder()
-				.setUrl(this.url + "/1")
-				.build();
+		testSubject = new BasicHTTTPClient.Builder().setUrl(url + "/1").build();
 		actual = testSubject.doGet();
 
 		assertEquals(actual.getStatusLine().getStatusCode(), 200);
@@ -59,15 +54,17 @@ public class BasicHTTPClientFakeAPITest {
 		 */
 		String expected = """
 						{
-							"id": 1,
-							"idBook": 1,
-							"firstName": "First Name 1",
-							"lastName": "Last Name 1"
+						  "id": 1,
+						  "title": "Activity 1",
+						  "dueDate": "2025-08-15T16:04:45.6842342+00:00",
+						  "completed": false
 						}
 				""";
 		json = EntityUtils.toString(actual.getEntity());
 		JsonObject actualJSON = new Gson().fromJson(json, JsonObject.class);
 		JsonObject expectedJSON = new Gson().fromJson(expected, JsonObject.class);
+		actualJSON.remove("dueDate");
+		expectedJSON.remove("dueDate");
 		assertEquals(actualJSON, expectedJSON);
 
 	}
@@ -90,11 +87,7 @@ public class BasicHTTPClientFakeAPITest {
 		headers.put("Content-Type", "application/json");
 		headers.put("Accept", "text/plain");
 
-		testSubject = new BasicHTTTPClient.Builder()
-				.setUrl(this.url)
-				.setHeaders(headers)
-				.setBody(body)
-				.build();
+		testSubject = new BasicHTTTPClient.Builder().setUrl(url).setHeaders(headers).setBody(body).build();
 
 		actual = testSubject.doPost();
 

@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.annotation.processing.Generated;
 
@@ -22,10 +21,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 @Generated(value = "org.junit-tools-1.1.0")
-public class BasicHTTPClientPlatziFakeStoreAPITest {
+public class BasicHTTPClientJSONPlaceholderAPITest {
 	
-	public static final Logger LOGGER = LoggerFactory.getLogger(BasicHTTPClientPlatziFakeStoreAPITest.class);
-	String url = "https://api.escuelajs.co/api/v1/products";
+	public static final Logger LOGGER = LoggerFactory.getLogger(BasicHTTPClientJSONPlaceholderAPITest.class);
+	String url = "https://jsonplaceholder.typicode.com/posts";
 	
 	@Test
 	public void doGetTest() throws Exception {
@@ -60,12 +59,11 @@ public class BasicHTTPClientPlatziFakeStoreAPITest {
 		/*
 		 *
 		 */
-		String expected = ClientUtils.readResource("product159.json");
+		String expected = ClientUtils.readResource("post1.json");
 		json = EntityUtils.toString(actual.getEntity());
 		JsonObject actualJSON = new Gson().fromJson(json, JsonObject.class);
 		JsonObject expectedJSON = new Gson().fromJson(expected, JsonObject.class);
 		assertEquals(expectedJSON, actualJSON);
-
 	}
 
 	@Test
@@ -73,8 +71,7 @@ public class BasicHTTPClientPlatziFakeStoreAPITest {
 		BasicHTTTPClient testSubject;
 		CloseableHttpResponse actual;
 
-		String body = ClientUtils.readResource("newproduct.json");
-		body = body.replaceAll("New Product", UUID.randomUUID().toString());
+		String body = ClientUtils.readResource("newpost.json");
 		
 		Map<String, String> headers = new HashMap<>();
 		headers.put("Content-Type", "application/json");
