@@ -1,6 +1,8 @@
 package com.github.mohamedennahdi.basichttpclient4j.client;
 
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,16 +15,17 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.mohamedennahdi.basichttpclient4j.client.utils.ClientUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 @Generated(value = "org.junit-tools-1.1.0")
-public class BasicHTTPClientFakeAPITest {
-
-	public static final Logger LOGGER = LoggerFactory.getLogger(BasicHTTPClientFakeAPITest.class);
-	String url = "https://fakerestapi.azurewebsites.net/api/v1/Activities";
-
+public class BasicHTTPClientJSONPlaceholderAPITest {
+	
+	public static final Logger LOGGER = LoggerFactory.getLogger(BasicHTTPClientJSONPlaceholderAPITest.class);
+	String url = "https://jsonplaceholder.typicode.com/posts";
+	
 	@Test
 	public void doGetTest() throws Exception {
 		BasicHTTTPClient testSubject;
@@ -31,7 +34,9 @@ public class BasicHTTPClientFakeAPITest {
 		LOGGER.info("Calling {}", this.url);
 
 		// default test
-		testSubject = new BasicHTTTPClient.Builder().setUrl(url).build();
+		testSubject = new BasicHTTTPClient.Builder()
+				.setUrl(url)
+				.build();
 		actual = testSubject.doGet();
 
 		assertEquals(actual.getStatusLine().getStatusCode(), 200);
@@ -41,33 +46,24 @@ public class BasicHTTPClientFakeAPITest {
 		String json = EntityUtils.toString(actual.getEntity());
 		JsonArray jsonObject = new Gson().fromJson(json, JsonArray.class);
 		assertTrue(jsonObject.size() > 0);
-
-		LOGGER.info("Calling {}", url + "/1");
+		String productId = jsonObject.get(0).getAsJsonObject().get("id").getAsString();
+		LOGGER.info("Calling {}", this.url + "/" + productId);
 
 		// default test
-		testSubject = new BasicHTTTPClient.Builder().setUrl(url + "/1").build();
+		testSubject = new BasicHTTTPClient.Builder()
+				.setUrl(this.url + "/" + productId)
+				.build();
 		actual = testSubject.doGet();
 
 		assertEquals(actual.getStatusLine().getStatusCode(), 200);
 		/*
 		 *
 		 */
-		String expected = """
-						{
-						  "id": 1,
-						  "title": "Activity 1",
-						  "dueDate": "2025-08-15T16:04:45.6842342+00:00",
-						  "completed": false
-						}
-				""";
+		String expected = ClientUtils.readResource("post1.json");
 		json = EntityUtils.toString(actual.getEntity());
 		JsonObject actualJSON = new Gson().fromJson(json, JsonObject.class);
 		JsonObject expectedJSON = new Gson().fromJson(expected, JsonObject.class);
-		actualJSON.remove("dueDate");
-		expectedJSON.remove("dueDate");
-		
-		assertEquals(actualJSON, expectedJSON);
-
+		assertEquals(expectedJSON, actualJSON);
 	}
 
 	@Test
@@ -75,23 +71,20 @@ public class BasicHTTPClientFakeAPITest {
 		BasicHTTTPClient testSubject;
 		CloseableHttpResponse actual;
 
-		String body = """
-					{
-					  "id": 77,
-					  "title": "Activity 77",
-					  "dueDate": "2025-08-06T14:17:11.218Z",
-					  "completed": false
-					}
-				""";
-
+		String body = ClientUtils.readResource("newpost.json");
+		
 		Map<String, String> headers = new HashMap<>();
 		headers.put("Content-Type", "application/json");
 		headers.put("Accept", "text/plain");
 
-		testSubject = new BasicHTTTPClient.Builder().setUrl(url).setHeaders(headers).setBody(body).build();
+		testSubject = new BasicHTTTPClient.Builder()
+				.setUrl(this.url)
+				.setHeaders(headers)
+				.setBody(body)
+				.build();
 
 		actual = testSubject.doPost();
 
-		assertEquals(actual.getStatusLine().getStatusCode(), 200);
+		assertEquals(201, actual.getStatusLine().getStatusCode());
 	}
 }
