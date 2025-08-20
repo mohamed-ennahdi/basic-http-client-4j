@@ -70,8 +70,6 @@ public class BasicHTTTPClient implements IBasicHTTTPClient {
 		private Map<String, String> body;
 		private String jsonBody;
 
-		public Builder() {
-		}
 		public String getUrl() {
 			return url;
 		}
@@ -112,24 +110,18 @@ public class BasicHTTTPClient implements IBasicHTTTPClient {
 		HttpPost request = new HttpPost(getUrl());
 		request = (HttpPost) updateRequest(request);
 
-//		if (Objects.nonNull(jsonBody) && !jsonBody.isBlank()) {
-//			request.setEntity(new StringEntity(this.jsonBody));
-//		} else {
-//
-//		}
-
 		return getClient().execute(request);
 	}
 
 	@Override
-	public CloseableHttpResponse doGet() throws ClientProtocolException, IOException, URISyntaxException {
+	public CloseableHttpResponse doGet() throws IOException, URISyntaxException {
 		HttpGet request = new HttpGet(getUrl());
 		request = (HttpGet) updateRequest(request);
 
 		return getClient().execute(request);
 	}
 
-	private HttpRequestBase updateRequest(final HttpRequestBase request) throws URISyntaxException, UnsupportedEncodingException {
+	private HttpRequestBase updateRequest(HttpRequestBase request) throws URISyntaxException, UnsupportedEncodingException {
 		if (Objects.nonNull(headers)) {
 			headers.forEach(request::addHeader);
 		}
