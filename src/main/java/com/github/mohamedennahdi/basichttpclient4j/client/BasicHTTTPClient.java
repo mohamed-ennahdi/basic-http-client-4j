@@ -1,14 +1,17 @@
 package com.github.mohamedennahdi.basichttpclient4j.client;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Objects;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
@@ -109,11 +112,11 @@ public class BasicHTTTPClient implements IBasicHTTTPClient {
 		HttpPost request = new HttpPost(getUrl());
 		request = (HttpPost) updateRequest(request);
 
-		if (Objects.nonNull(jsonBody) && !jsonBody.isBlank()) {
-			request.setEntity(new StringEntity(this.jsonBody));
-		} else {
-
-		}
+//		if (Objects.nonNull(jsonBody) && !jsonBody.isBlank()) {
+//			request.setEntity(new StringEntity(this.jsonBody));
+//		} else {
+//
+//		}
 
 		return getClient().execute(request);
 	}
@@ -126,7 +129,7 @@ public class BasicHTTTPClient implements IBasicHTTTPClient {
 		return getClient().execute(request);
 	}
 
-	private HttpRequestBase updateRequest(final HttpRequestBase request) throws URISyntaxException {
+	private HttpRequestBase updateRequest(final HttpRequestBase request) throws URISyntaxException, UnsupportedEncodingException {
 		if (Objects.nonNull(headers)) {
 			headers.forEach(request::addHeader);
 		}
@@ -134,8 +137,22 @@ public class BasicHTTTPClient implements IBasicHTTTPClient {
 		if (Objects.nonNull(params)) {
 			params.forEach(builder::addParameter);
 		}
+		if (request instanceof HttpEntityEnclosingRequestBase) 
+		if (Objects.nonNull(jsonBody) && !jsonBody.isBlank()) {
+			((HttpEntityEnclosingRequestBase)request).setEntity(new StringEntity(this.jsonBody));
+		} else {
+
+		}
 
 		request.setURI(builder.build());
 		return request;
+	}
+
+	@Override
+	public CloseableHttpResponse doPut() throws IOException, URISyntaxException {
+		HttpPut request = new HttpPut(getUrl());
+		request = (HttpPut) updateRequest(request);
+		
+		return this.client.execute(request);
 	}
 }
