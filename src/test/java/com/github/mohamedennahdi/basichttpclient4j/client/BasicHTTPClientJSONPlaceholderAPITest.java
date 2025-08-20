@@ -88,20 +88,26 @@ public class BasicHTTPClientJSONPlaceholderAPITest {
 
 	@Test
 	public void doPutTest() throws Exception {
-		String body = ClientUtils.readResource("newpost.json");
+		String expected = ClientUtils.readResource("altered-post2.json");
 		
 		Map<String, String> headers = new HashMap<>();
 		headers.put("Content-Type", "application/json");
 		headers.put("Accept", "text/plain");
 
 		BasicHTTTPClient testSubject = new BasicHTTTPClient.Builder()
-				.setUrl(this.url)
+				.setUrl(this.url + "/2")
 				.setHeaders(headers)
-				.setBody(body)
+				.setBody(expected)
 				.build();
 
 		CloseableHttpResponse actual = testSubject.doPut();
 
-		assertEquals(201, actual.getStatusLine().getStatusCode());
+		assertEquals(actual.getStatusLine().getStatusCode(), 200);
+		
+		String json = EntityUtils.toString(actual.getEntity());
+		JsonObject actualJSON = new Gson().fromJson(json, JsonObject.class);
+		JsonObject expectedJSON = new Gson().fromJson(expected, JsonObject.class);
+		
+		assertEquals(actualJSON, expectedJSON);
 	}
 }

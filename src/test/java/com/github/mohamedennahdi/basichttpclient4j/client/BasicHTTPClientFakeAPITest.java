@@ -97,8 +97,7 @@ public class BasicHTTPClientFakeAPITest {
 
 	@Test
 	public void doPutTest() throws Exception {
-		String body, expected; 
-		body = expected = """
+		String expected = """
 				{
 				  "id": 30,
 				  "title": "Altered Activity 30",
@@ -111,8 +110,10 @@ public class BasicHTTPClientFakeAPITest {
 		headers.put("Content-Type", "application/json");
 		headers.put("Accept", "text/plain");
 
-		BasicHTTTPClient testSubject = new BasicHTTTPClient.Builder().setUrl(url + "/30").setHeaders(headers).setBody(body)
-				.build();
+		BasicHTTTPClient testSubject = new BasicHTTTPClient.Builder()
+														   .setUrl(url + "/30").setHeaders(headers)
+														   .setBody(expected)
+														   .build();
 
 		CloseableHttpResponse actual = testSubject.doPut();
 
