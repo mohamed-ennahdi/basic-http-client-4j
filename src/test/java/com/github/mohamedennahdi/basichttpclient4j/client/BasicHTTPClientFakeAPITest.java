@@ -27,7 +27,7 @@ public class BasicHTTPClientFakeAPITest {
 	public void doGetTest() throws Exception {
 		BasicHTTTPClient testSubject;
 		CloseableHttpResponse actual;
-		
+
 		LOGGER.info("Calling {}", this.url);
 
 		// default test
@@ -65,7 +65,7 @@ public class BasicHTTPClientFakeAPITest {
 		JsonObject expectedJSON = new Gson().fromJson(expected, JsonObject.class);
 		actualJSON.remove("dueDate");
 		expectedJSON.remove("dueDate");
-		
+
 		assertEquals(actualJSON, expectedJSON);
 
 	}
@@ -93,5 +93,36 @@ public class BasicHTTPClientFakeAPITest {
 		actual = testSubject.doPost();
 
 		assertEquals(actual.getStatusLine().getStatusCode(), 200);
+	}
+
+	@Test
+	public void doPutTest() throws Exception {
+		String expected = """
+				{
+				  "id": 30,
+				  "title": "Altered Activity 30",
+				  "dueDate": "2025-08-20T03:16:56.4199481+00:00",
+				  "completed": true
+				}
+					""";
+
+		Map<String, String> headers = new HashMap<>();
+		headers.put("Content-Type", "application/json");
+		headers.put("Accept", "text/plain");
+
+		BasicHTTTPClient testSubject = new BasicHTTTPClient.Builder()
+														   .setUrl(url + "/30").setHeaders(headers)
+														   .setBody(expected)
+														   .build();
+
+		CloseableHttpResponse actual = testSubject.doPut();
+
+		assertEquals(actual.getStatusLine().getStatusCode(), 200);
+		
+		String json = EntityUtils.toString(actual.getEntity());
+		JsonObject actualJSON = new Gson().fromJson(json, JsonObject.class);
+		JsonObject expectedJSON = new Gson().fromJson(expected, JsonObject.class);
+		
+		assertEquals(actualJSON, expectedJSON);
 	}
 }
