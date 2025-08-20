@@ -137,11 +137,10 @@ public class BasicHTTTPClient implements IBasicHTTTPClient {
 		if (Objects.nonNull(params)) {
 			params.forEach(builder::addParameter);
 		}
-		if (request instanceof HttpEntityEnclosingRequestBase) 
-		if (Objects.nonNull(jsonBody) && !jsonBody.isBlank()) {
-			((HttpEntityEnclosingRequestBase)request).setEntity(new StringEntity(this.jsonBody));
-		} else {
-
+		if (request instanceof HttpEntityEnclosingRequestBase baseRequest) {
+			if (Objects.nonNull(jsonBody) && !jsonBody.isBlank()) {
+				baseRequest.setEntity(new StringEntity(this.jsonBody));
+			}
 		}
 
 		request.setURI(builder.build());
